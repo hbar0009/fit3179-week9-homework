@@ -1,0 +1,86 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Density of Airbnbs in Greater Melbourne (2023)",
+  "width": 717,
+  "height": 400,
+  "view": { "fill": "skyblue" },
+  "data": {
+    "url": "https://raw.githubusercontent.com/hbar0009/fit3179-week9-homework/main/data/neighbourhoods_with_background.json",
+    "format": { "type": "topojson", "feature": "neighbourhoods" }
+  },
+  "projection": { "type": "equirectangular" },
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/hbar0009/fit3179-week9-homework/main/data/neighbourhoods_with_background.json",
+        "format": { "type": "topojson", "feature": "AUS_2016_AUST" }
+      },
+      "mark": { "type": "geoshape", "fill": "lightgray" }
+    },
+    {
+      "transform": [
+        {
+          "lookup": "properties.neighbourhood",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/hbar0009/fit3179-week9-homework/main/data/listings_and_dwellings.csv"
+            },
+            "key": "neighbourhood",
+            "fields": ["listings", "dwellings"]
+          }
+        },
+        {
+          "calculate": "datum.listings/datum.dwellings * 10000",
+          "as": "Listings per 10,000 Dwellings"
+        }
+      ],
+      "mark": { "type": "geoshape", "stroke": "gray", "strokeWidth": 0.2 },
+      "encoding": {
+        "color": {
+          "field": "Listings per 10,000 Dwellings",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [30, 50, 100, 200, 500],
+            "scheme": "orangered"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "properties.neighbourhood",
+            "type": "nominal",
+            "title": "Local Council"
+          },
+          {
+            "field": "listings",
+            "type": "quantitative",
+            "title": "Number of Listings"
+          },
+          {
+            "field": "dwellings",
+            "type": "quantitative",
+            "title": "Number of Dwellings"
+          },
+          {
+            "field": "Listings per 10,000 Dwellings",
+            "type": "quantitative",
+            "title": "Listings per 10,000 Dwellings",
+            "format": ".0f"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/hbar0009/fit3179-week9-homework/main/data/neighbourhoods_with_background.json",
+        "format": { "type": "topojson", "feature": "ne_110m_graticules_1" }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": null,
+        "stroke": "black",
+        "opacity": 0.3
+      }
+    }
+  ]
+}
